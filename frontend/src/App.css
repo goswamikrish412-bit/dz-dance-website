@@ -1,0 +1,32 @@
+/* Global smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but keep functionality */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #dc2626, #9333ea);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #b91c1c, #7e22ce);
+}
+
+/* Disable default focus outline for better UX */
+button:focus {
+    outline: none;
+}
+
+/* Add animation delays */
+.delay-1000 {
+    animation-delay: 1s;
+}
