@@ -150,17 +150,53 @@ if ('loading' in HTMLImageElement.prototype) {
     document.body.appendChild(script);
 }
 
-// Add hover effect to buttons
-const buttons = document.querySelectorAll('.btn, .btn-service');
+// Add hover effect to buttons with enhanced animations
+const buttons = document.querySelectorAll('.btn, .btn-service, .btn-call, .btn-contact-call, .btn-contact-whatsapp, .btn-submit');
 buttons.forEach(button => {
-    button.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px)';
+    // Mouse enter animation
+    button.addEventListener('mouseenter', function(e) {
+        this.style.transform = 'translateY(-5px) scale(1.05)';
+        
+        // Create particle effect
+        for (let i = 0; i < 3; i++) {
+            createParticle(e.clientX, e.clientY);
+        }
     });
     
+    // Mouse leave animation
     button.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+    
+    // Click animation with ripple
+    button.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple-effect');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => ripple.remove(), 600);
     });
 });
+
+// Create floating particles on button hover
+function createParticle(x, y) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    document.body.appendChild(particle);
+    
+    setTimeout(() => particle.remove(), 1000);
+}
 
 // Form submission (if contact form is added later)
 const contactForm = document.getElementById('contact-form');
@@ -265,10 +301,10 @@ rippleButtons.forEach(button => {
 // Add CSS for ripple effect dynamically
 const style = document.createElement('style');
 style.textContent = `
-    .ripple {
+    .ripple-effect {
         position: absolute;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.7);
         transform: scale(0);
         animation: ripple-animation 0.6s ease-out;
         pointer-events: none;
@@ -281,11 +317,78 @@ style.textContent = `
         }
     }
     
-    .btn, .btn-service, .btn-call {
+    .particle {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: linear-gradient(135deg, #dc2626, #9333ea);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: particle-float 1s ease-out forwards;
+        z-index: 9999;
+    }
+    
+    @keyframes particle-float {
+        0% {
+            transform: translate(0, 0) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(var(--x), var(--y)) scale(0);
+            opacity: 0;
+        }
+    }
+    
+    .btn, .btn-service, .btn-call, .btn-contact-call, .btn-contact-whatsapp, .btn-submit {
         position: relative;
         overflow: hidden;
     }
+    
+    /* Button glow effect */
+    .btn:hover, .btn-service:hover, .btn-call:hover {
+        animation: button-glow 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes button-glow {
+        0%, 100% {
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4),
+                        0 0 40px rgba(147, 51, 234, 0.2);
+        }
+        50% {
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.6),
+                        0 0 60px rgba(147, 51, 234, 0.4);
+        }
+    }
+    
+    /* Magnetic button effect */
+    .btn-magnetic {
+        transition: transform 0.2s ease-out;
+    }
 `;
 document.head.appendChild(style);
+
+// Magnetic button effect
+document.querySelectorAll('.btn, .btn-service, .btn-call').forEach(button => {
+    button.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        
+        this.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) scale(1.05)`;
+    });
+    
+    button.addEventListener('mouseleave', function() {
+        this.style.transform = 'translate(0, 0) scale(1)';
+    });
+});
+
+// Add particle animation CSS
+const particles = document.querySelectorAll('.particle');
+particles.forEach((particle, index) => {
+    const angle = (Math.PI * 2 * index) / 3;
+    const distance = 50 + Math.random() * 50;
+    particle.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+    particle.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+});
 
 console.log('DZ Dance & Fitness Temple - Website Loaded Successfully!');
